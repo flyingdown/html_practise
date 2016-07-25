@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript">
+	function init() {
+		var WIDTH=480, HEIGHT=620;
+
+		var bg = new Image();
+		bg.src = "img/background.png";
+
+		var SKY = {
+			image : bg, 
+			width:480,
+			height : 620,
+			speed : 20
+		}
+
+		var canvas = document.querySelector ( "canvas");
+		var ctx = canvas.getContext ('2d');
+
+		var sky = new Sky(SKY);
+
+
+		function Sky ( config ) {
+			/* 数据 */ 
+			this.bg = config.image;
+			this.width = config.width;
+			this.height = config.height;
+			this.speed = 1000 / config.speed;
+
+			this.x1 = this.x2 = 0;
+			this.y1 = -1*HEIGHT;
+			this.y2 = 0;
+
+			this.last_move_time = new Date().getTime();
+			/* 天空移动 */
+			this.step = function (){
+				if ( new Date().getTime() - this.last_move_time < this.speed )
+					return;
+				this.y1 = ( this.y1 >= HEIGHT ? -853 : ++this.y1 );
+				this.y2 = ( this.y2 >= HEIGHT ? -853 : ++this.y2 );
+				this.last_move_time = new Date().getTime();
+			}
+			/* 绘制天空 */
+			this.paint = function ( ctx ) {
+				ctx.drawImage ( this.bg, this.x1, this.y1);
+				ctx.drawImage ( this.bg, this.x2, this.y2);
+			}
+
+
+		}
+
+		setInterval ( function () {
+			sky.step();
+			sky.paint(ctx);
+		}, 10);
+	}
+
+	window.addEventListener("load",init,false);
+	</script>
+</head>
+<body>
+<div style="margin: 0 auto">
+<canvas width = "480" height = "620" >
+	
+</canvas>
+</div>
+</body>
+</html>

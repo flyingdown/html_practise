@@ -14,6 +14,11 @@
 		var PAUSE = 3;
 		var GAMEOVER = 4;
 
+		/* 分数 */
+		var socre = 0;
+		/* 生命 */
+		var life = 0;
+
 		/* 初始状态 */
 		var state = START;
 
@@ -48,9 +53,17 @@
 			}
 		}
 
+		/* 敌机－－小飞机图片 */
+
+
 		/* 子弹图片 */
-		var bullet_config = new Image ();
-		bullet_config.src = "img/bullet1.png";
+		var bullet_img = new Image ();
+		bullet_img.src = "img/bullet1.png";
+
+		/* 暂停图片 */
+		var pause_img = [ new Image (), new Image () ];
+		pause_img[0].src = "img/game_pause_nor.png";
+		pause_img[1].src = "img/game_pause_pressed.png";
 		
 
 		/* 绘画对象 */
@@ -60,7 +73,7 @@
 		/* 配置数据对象 */
 
 		var BULLET = {
-			frame : bullet_config ,
+			frame : bullet_img ,
 			width : 9,
 			height : 21,
 			speed : 100
@@ -93,6 +106,8 @@
 			speed : 20
 		}
 
+
+
 		/* 逻辑对象 */
 		var sky = new Sky(SKY);
 		var loader = new loading ( LOADING );
@@ -116,8 +131,38 @@
 			}
 		}
 
+		canvas.onmouseout = function ( event ) {
+			state = PAUSE;
+		}
+
+		canvas.onmouseenter = function () {
+			if ( state == PAUSE )
+				state = RUNNING;
+		}
+
+		/* 分数 生命 */
+		function SocreAndLife (ctx) {
+			ctx.font = "20px 微软雅黑";
+			ctx.fillText ( "SOCRE : " + socre, 10, 20 );
+			ctx.fillText ( "LIFE : " + life, 400, 20 );
+		}
+
 		/* 子弹模板 */
-		function Bullet ( config ) {
+		function Bullet ( config, x, y ) {
+			this.frame = config.frame;
+			this.x = x;
+			this.y = y - config.height;
+			this.width = config.width;
+			this.height = config.height;
+
+			this.move = function () {
+				this.y -= 2;
+			}
+
+			this.paint = function (ctx) {
+				// console.log ( this.frame );
+				ctx.drawImage ( this.frame, this.x, this.y );
+			}
 
 		}
 
@@ -129,6 +174,9 @@
 			this.frame_index = 0;
 			this.x = ( WIDTH - 99 ) / 2;
 			this.y = ( HEIGHT - 124 ) / 2 + 90;
+			this.shootInterval = 200;
+			this.shoot_last_time = new Date().getTime();
+			this.bullets = [];
 
 			this.step = function () {
 				if ( new Date().getTime() - this.last_move_time < this.speed )
@@ -140,6 +188,33 @@
 
 			this.paint = function ( ctx ) {
 				ctx.drawImage ( this.frame, this.x, this.y );
+			}
+
+			/* 发射子弹 */
+			this.shoot = function () {
+				for ( var i = 0; i < this.bullets.length; ++i )
+				{
+					if ( this.bullets[i].y < 0 )
+					{
+						this.bullets.splice ( i, 1 );
+					}else
+					{
+						if ( state == RUNNING )
+						{
+							this.bullets[i].move();
+						}
+
+						this.bullets[i].paint ( ctx );
+					}
+				}
+
+				if ( new Date().getTime() - this.shoot_last_time < this.shootInterval )
+					return;
+				// console.log ( BULLET.bullet_img );
+				this.bullets.push ( new Bullet ( BULLET, this.x + config.width / 2, this.y ) ); 
+
+				this.shoot_last_time = new Date().getTime();
+
 			}
 		}
 
@@ -223,13 +298,25 @@
 					// 游戏背景
 					sky.step();
 					sky.paint(ctx);
+
+					// 分数
+					SocreAndLife ( ctx );
+
 					hero.step();
 					hero.paint(ctx);
+					hero.shoot();
+
 					break;
 				case PAUSE :
 					// 游戏背景
 					sky.step();
 					sky.paint(ctx);
+					// 分数
+					SocreAndLife ( ctx );
+					hero.step();
+					hero.paint(ctx);
+					hero.shoot();
+					ctx.drawImage ( pause_img[0], WIDTH / 2 , HEIGHT / 2 );
 					break;
 				case GAMEOVER :
 					// 游戏背景

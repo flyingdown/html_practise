@@ -6,31 +6,76 @@
 	function init() {
 		/* 定义宽和高 */
 		var WIDTH=480, HEIGHT=620;
+
 		/* 定义状态 */
 		var START = 0;
 		var STARTING = 1;
 		var RUNNING = 2;
 		var PAUSE = 3;
 		var GAMEOVER = 4;
+
 		/* 初始状态 */
 		var state = START;
 
+		/* 定义资源 */
+		/* 背景图片 */
 		var bg = new Image();
 		bg.src = "img/background.png";
 
+		/* 版权图片 */
 		var copy_right = new Image();
 		copy_right.src = "img/shoot_copyright.png"
 
-		var canvas = document.querySelector ( "canvas");
-		var ctx = canvas.getContext ('2d');
-
-		/* 配置对象 */
+		/* 游戏加载图片 */
 		var load_config = [];
 		for ( var i = 0; i < 4; ++i )
 		{
 			load_config[i] = new Image();
 			load_config[i].src = "img/game_loading"+(i+1)+".png";
 		}
+
+		/* 英雄飞机图片 */
+		var hero_config = [];
+		for ( var i = 0; i < 6; ++i )
+		{
+			hero_config[i] = new Image();
+			if ( i < 2 )
+			{
+				hero_config[i].src = "img/hero"+(i+1)+".png";
+			}else 
+			{
+				hero_config[i].src = "img/hero_blowup_n"+(i-1)+".png";
+			}
+		}
+
+		/* 子弹图片 */
+		var bullet_config = new Image ();
+		bullet_config.src = "img/bullet1.png";
+		
+
+		/* 绘画对象 */
+		var canvas = document.querySelector ( "canvas");
+		var ctx = canvas.getContext ('2d');
+
+		/* 配置数据对象 */
+
+		var BULLET = {
+			frame : bullet_config ,
+			width : 9,
+			height : 21,
+			speed : 100
+		}
+
+		var HERO = {
+			frames : hero_config,
+			width : 99,
+			height : 124,
+			x : ( WIDTH - 99 ) / 2,
+			y : ( HEIGHT - 124 ) / 2 + 90,
+			speed : 50,
+			base : 2
+		}
+
 
 		var LOADING = {
 			frames : load_config,
@@ -51,6 +96,7 @@
 		/* 逻辑对象 */
 		var sky = new Sky(SKY);
 		var loader = new loading ( LOADING );
+		var hero = new Hero ( HERO );
 
 
 		/* 为canvas添加事件 */
@@ -61,7 +107,43 @@
 			}
 		}
 
-		/* 游戏加载动画 */
+		canvas.onmousemove = function ( event ) {
+			if ( state == RUNNING )
+			{
+				// console.log ( event.offsetX + ":" + event.offsetY );
+				hero.x = event.offsetX - 99 / 2;
+				hero.y = event.offsetY - 124 /2 ;
+			}
+		}
+
+		/* 子弹模板 */
+		function Bullet ( config ) {
+
+		}
+
+
+		/* 英雄模板 */
+		function Hero ( config ) {
+			this.speed = 1000 / config.speed;
+			this.last_move_time = new Date().getTime();
+			this.frame_index = 0;
+			this.x = ( WIDTH - 99 ) / 2;
+			this.y = ( HEIGHT - 124 ) / 2 + 90;
+
+			this.step = function () {
+				if ( new Date().getTime() - this.last_move_time < this.speed )
+					return;
+				this.frame = config.frames[this.frame_index++ % config.base];
+				//console.log ( this.frame_index++ % config.base );
+				this.last_move_time = new Date().getTime();
+			}
+
+			this.paint = function ( ctx ) {
+				ctx.drawImage ( this.frame, this.x, this.y );
+			}
+		}
+
+		/* 游戏加载动画模板 */
 		function loading ( config ) {
 			this.speed = 1000 / config.speed;
 			this.last_move_time = new Date().getTime();
@@ -127,7 +209,7 @@
 					var copy_right_x = (WIDTH-copy_right.naturalWidth)/2;
 					var copy_right_y = (HEIGHT-copy_right.naturalHeight)/2;
 
-		console.log (copy_right_x + ":" + copy_right_y);
+					// console.log (copy_right_x + ":" + copy_right_y);
 					ctx.drawImage(copy_right, copy_right_x, copy_right_y);
 					break;
 				case STARTING :
@@ -141,6 +223,8 @@
 					// 游戏背景
 					sky.step();
 					sky.paint(ctx);
+					hero.step();
+					hero.paint(ctx);
 					break;
 				case PAUSE :
 					// 游戏背景

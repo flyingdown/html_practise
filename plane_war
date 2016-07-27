@@ -17,7 +17,7 @@
 		/* 分数 */
 		var socre = 0;
 		/* 生命 */
-		var life = 0;
+		var life = 3;
 
 		/* 初始状态 */
 		var state = START;
@@ -54,6 +54,42 @@
 		}
 
 		/* 敌机－－小飞机图片 */
+		var enemy_small = [];
+		for ( var i = 0; i < 5; ++i )
+		{
+			enemy_small[i] = new Image ();
+			if ( i == 0 )
+				enemy_small[i].src = "img/enemy1.png"
+			else
+				enemy_small[i].src = "img/enemy1_down" + i + ".png";
+		}
+
+		/* 敌机－－中等飞机图片 */
+		var enemy_medium = [];
+		for ( var i = 0; i < 6; ++i )
+		{
+			enemy_medium[i] = new Image ();
+			if ( i == 0 )
+				enemy_medium[i].src = "img/enemy2.png"
+			else if ( i < 4 )
+				enemy_medium[i].src = "img/enemy2_down" + i + ".png";
+			else
+				enemy_medium[i].src = "img/enemy2_hit.png";
+		}
+
+		/* 敌机－－大飞机图片 */
+		var enemy_big = [];
+		for ( var i = 0; i < 8; ++i )
+		{
+			enemy_big[i] = new Image ();
+			if ( i < 2 )
+				enemy_big[i].src = "img/enemy3_n"+ (i+1)+".png"
+			else if ( i < 7 )
+				enemy_big[i].src = "img/enemy3_down" + (i-1) + ".png";
+			else
+				enemy_big[i].src = "img/enemy3_hit.png";
+		}
+
 
 
 		/* 子弹图片 */
@@ -71,6 +107,27 @@
 		var ctx = canvas.getContext ('2d');
 
 		/* 配置数据对象 */
+
+		var ENEMY_SMALL = {
+			frames : enemy_small,
+			width : 57,
+			height : 51,
+			speed : 50
+		}
+
+		var ENEMY_MEDIUM = {
+			frames : enemy_medium,
+			width : 69,
+			height : 95,
+			speed : 50
+		}
+
+		var ENEMY_BIG = {
+			frames : enemy_big,
+			width : 165,
+			height : 261,
+			speed : 100
+		}
 
 		var BULLET = {
 			frame : bullet_img ,
@@ -112,6 +169,77 @@
 		var sky = new Sky(SKY);
 		var loader = new loading ( LOADING );
 		var hero = new Hero ( HERO );
+		
+		enemy_smallers = [];
+		var enemy_small_interval = 1000;
+		var last_gen_small = new Date().getTime();
+
+		enemy_mediumers = [];
+		var enemy_medium_interval = 5500;
+		var last_gen_medium = new Date().getTime();
+
+		var enemy_biggers = [];
+		var enemy_big_interval = 15500;
+		var last_gen_big = new Date().getTime();
+
+		function enemy_genration () 
+		{
+			if ( new Date().getTime() - last_gen_small > enemy_small_interval )
+			{
+				if ( state == RUNNING )
+				{
+					enemy_smallers.push ( new Enemy_small ( ENEMY_SMALL ) );
+					last_gen_small = new Date().getTime();
+				}
+			}
+
+			if ( new Date().getTime() - last_gen_medium > enemy_medium_interval )
+			{
+				if ( state == RUNNING )
+				{
+					enemy_mediumers.push ( new Enemy_medium ( ENEMY_MEDIUM ) );
+					last_gen_medium = new Date().getTime();
+				}
+			}
+
+			if ( new Date().getTime() - last_gen_big > enemy_big_interval )
+			{
+				if ( state == RUNNING )
+				{
+					enemy_biggers.push ( new Enemy_big ( ENEMY_BIG ) );
+					last_gen_big = new Date().getTime();
+				}
+			}
+
+			for ( var i = 0; i < enemy_smallers.length; ++i )
+			{
+				if ( enemy_smallers[i].y > HEIGHT )
+					enemy_smallers.splice ( i, 1 );
+
+				enemy_smallers[i].step();
+				enemy_smallers[i].move();
+				enemy_smallers[i].paint(ctx);
+			}
+
+			for ( var i = 0; i < enemy_mediumers.length; ++i )
+			{
+				if ( enemy_mediumers[i].y > HEIGHT )
+					enemy_mediumers.splice ( i, 1 );
+
+				enemy_mediumers[i].step();
+				enemy_mediumers[i].move();
+				enemy_mediumers[i].paint(ctx);
+			}
+
+			for ( var i = 0; i < enemy_biggers.length; ++i )
+			{
+				if ( enemy_biggers[i].y > HEIGHT )
+					enemy_biggers.splice ( i, 1 );
+
+				enemy_biggers[i].move();
+				enemy_biggers[i].paint(ctx);
+			}
+		}
 
 
 		/* 为canvas添加事件 */
@@ -145,6 +273,112 @@
 			ctx.font = "20px 微软雅黑";
 			ctx.fillText ( "SOCRE : " + socre, 10, 20 );
 			ctx.fillText ( "LIFE : " + life, 400, 20 );
+		}
+
+		/* 敌机－－大飞机图片 */
+		function Enemy_big ( config ) {
+			this.frames = config.frames;
+			this.width = config.width;
+			this.height = config.height;
+			this.speed = config.speed;
+			this.last_move_time = new Date().getTime();
+			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
+			this.y = 0;
+			this.frame_index = 0;
+			this.last_frame_time = new Date().getTime();
+			this.frame_interval = 100;
+
+			this.step = function () {
+				if ( new Date().getTime() - this.last_frame_time < this.frame_interval )
+					return ;
+
+				this.frame = this.frames[this.frame_index++ % 2];
+
+				this.last_frame_time = new Date().getTime();
+			}
+
+			this.move = function () {
+				this.step();
+
+				if ( state != RUNNING )
+					return;
+
+				if ( new Date().getTime() - this.last_move_time < this.speed )
+					return;
+
+				this.y += 2;
+
+				this.last_move_time = new Date().getTime();
+			}
+
+			this.paint = function ( ctx ) {
+				// console.log (this.x + ":" + this.y);
+				ctx.drawImage ( this.frame, this.x, this.y );
+			}
+		}
+
+		/* 敌机－－中等飞机图片 */
+		function Enemy_medium ( config ) {
+			this.frames = config.frames;
+			this.width = config.width;
+			this.height = config.height;
+			this.speed = config.speed;
+			this.last_move_time = new Date().getTime();
+			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
+			this.y = 0;
+
+			this.step = function () {
+				this.frame = this.frames[0];
+			}
+
+			this.move = function () {
+				if ( state != RUNNING )
+					return;
+
+				if ( new Date().getTime() - this.last_move_time < this.speed )
+					return;
+
+				this.y += 2;
+
+				this.last_move_time = new Date().getTime();
+			}
+
+			this.paint = function ( ctx ) {
+				// console.log (this.x + ":" + this.y);
+				ctx.drawImage ( this.frame, this.x, this.y );
+			}
+		}
+
+		/* 敌机－－小飞机 */
+		function Enemy_small ( config ) {
+			this.frames = config.frames;
+			this.width = config.width;
+			this.height = config.height;
+			this.speed = config.speed;
+			this.last_move_time = new Date().getTime();
+			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
+			this.y = 0;
+
+			this.step = function () {
+				this.frame = this.frames[0];
+			}
+
+			this.move = function () {
+				if ( state != RUNNING )
+					return;
+
+				if ( new Date().getTime() - this.last_move_time < this.speed )
+					return;
+
+				this.y += 2;
+
+				this.last_move_time = new Date().getTime();
+			}
+
+			this.paint = function ( ctx ) {
+				// console.log (this.x + ":" + this.y);
+				ctx.drawImage ( this.frame, this.x, this.y );
+			}
 		}
 
 		/* 子弹模板 */
@@ -306,6 +540,8 @@
 					hero.paint(ctx);
 					hero.shoot();
 
+					enemy_genration ();
+
 					break;
 				case PAUSE :
 					// 游戏背景
@@ -317,6 +553,7 @@
 					hero.paint(ctx);
 					hero.shoot();
 					ctx.drawImage ( pause_img[0], WIDTH / 2 , HEIGHT / 2 );
+					enemy_genration ();
 					break;
 				case GAMEOVER :
 					// 游戏背景

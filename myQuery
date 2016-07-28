@@ -1,0 +1,99 @@
+
+function MyObject ()
+{
+	this.data = [];
+}
+
+MyObject.prototype = {
+	val : function ( content ) {
+		if ( content )
+		{
+			for ( var i = 0; i < this.data.length; ++i )
+			{
+				this.data[i].value = content;
+			}
+			return this;
+		}else
+		{
+			//console.log ( this.data );
+			return this.data[0].value;
+		}
+	},
+	attr : function ( key, value ) {
+		if ( value ) {
+			var attr = document.createAttribute (key);
+			attr.value = value;
+			for ( var i = 0; i < this.data.length; ++i )
+			{
+				this.data[0].setAttributeNode(attr);
+			}
+		}else
+		{
+			if ( this.data.length )
+				return this.data[0].getAttributeNode(key).value;
+		}
+	},
+	addClass : function ( className ) {
+		var oriClassName;
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			oriClassName = this.data[i].getAttribute ( "class" );
+			var newClassName = document.createAttribute ( "class" );
+			if ( oriClassName )
+			{
+				newClassName.value = oriClassName + " " + className;
+			}else
+			{
+				newClassName.value = className;
+			}
+			this.data[i].setAttributeNode ( newClassName );
+			return this;
+		}
+	},
+	removeClass : function ( className ) {
+		var oriClassName;
+		if ( className ) 
+		{
+			for ( var i = 0; i < this.data.length; ++i )
+			{
+				oriClassName = this.data[i].getAttributeNode("class").value;
+				var reg = new RegExp ( "\s*\b" + className + "\b\s*" );
+				oriClassName = oriClassName.replace (reg, "");
+				console.log ( oriClassName );
+				if ( oriClassName )
+				{
+					var newClassName = document.createAttribute ( "class" );
+					newClassName.value = oriClassName;
+					this.data[i].setAttributeNode ( newClassName );
+				}else
+				{
+					this.data[i].removeAttribute ( "class" );
+				}
+			}
+		}else
+		{
+			for ( var i = 0; i < this.data.length; ++i )
+			{
+				this.data[i].removeAttribute ( "class" );
+			}
+		}
+		return this;
+	}
+}
+
+
+var $ = function ( selector ) {
+	var myObject = new MyObject ();
+	var c = selector.substring ( 0, 1 );
+	if ( c === '#' )
+	{
+		myObject.data.push ( document.getElementById ( selector.substring(1,selector.length ) ) );
+
+	}else
+	{
+		// console.log ( document.getElementsByTagName ( selector ) );
+		myObject.data = document.getElementsByTagName ( selector );
+	}
+	
+	return myObject;	
+}

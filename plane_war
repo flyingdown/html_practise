@@ -377,8 +377,18 @@
 				ctx.drawImage ( this.frame, this.x, this.y );
 				// console.log ( "end :" + this.type );
 			}
-
-			// this.hit = function ( )
+			// hero_bullet.x-hero.bullet.width/2, hero_bullet.y-hero_bullet.height/2
+			// this.x-hero.bullet.width/2 -- this.x+this.width+hero_bullet.width/2
+			// this.y-hero.bullet.height/2 -- this.y+this.height+hero_bullet.height/2
+			this.hit = function ( hero_bullet ) {
+				if ( hero_bullet.x - hero_bullet.width / 2 > this.x - hero_bullet.width / 2
+					&& hero_bullet.x - hero_bullet.width / 2 < this.x + this.width + hero_bullet.width / 2
+					&& hero_bullet.y-hero_bullet.height/2 > this.y - hero.bullet.height / 2
+					&& hero_bullet.y-hero_bullet.height/2 < this.y+this.height+hero_bullet.height/2 )
+					return true;
+				else
+					return false;
+			}
 		}
 
 		/* 敌机－－大飞机业务对象

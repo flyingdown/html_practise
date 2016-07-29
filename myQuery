@@ -5,6 +5,19 @@ function MyObject ()
 }
 
 MyObject.prototype = {
+	text : function (content) {
+		var reg = /(?:<[^>]+?>)?(.*)(?:<\/[^>]+?>)?/;
+		if ( content )
+		{
+
+		}else
+		{
+			// console.log ( this.data[0].innerHTML );
+			var arr = reg.exec ( this.data[0].innerHTML );
+			return arr[0];
+		}
+
+	},
 	val : function ( content ) {
 		if ( content )
 		{
@@ -52,14 +65,14 @@ MyObject.prototype = {
 	},
 	removeClass : function ( className ) {
 		var oriClassName;
-		if ( className ) 
+		if ( className )
 		{
 			for ( var i = 0; i < this.data.length; ++i )
 			{
 				oriClassName = this.data[i].getAttributeNode("class").value;
-				var reg = new RegExp ( "\s*\b" + className + "\b\s*" );
+				var reg = new RegExp ( "\\s\*\\b" + className + "\\b\\s\*" );
 				oriClassName = oriClassName.replace (reg, "");
-				console.log ( oriClassName );
+				// console.log ( oriClassName );
 				if ( oriClassName )
 				{
 					var newClassName = document.createAttribute ( "class" );
@@ -78,6 +91,25 @@ MyObject.prototype = {
 			}
 		}
 		return this;
+	},
+	append : function ( element ) {
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			this.data[i].appendChild(element.data[0]);
+		}
+	},
+	appendTo : function ( element ) {
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element.data[0].appendChild ( this.data[i] );
+		}
+	},
+	insertBefore : function ( element ) {
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			// console.log ( element.data[0] );
+			element.data[0].parentNode.insertBefore ( this.data[i], element.data[0] );
+		}
 	}
 }
 
@@ -85,15 +117,26 @@ MyObject.prototype = {
 var $ = function ( selector ) {
 	var myObject = new MyObject ();
 	var c = selector.substring ( 0, 1 );
+	// var reg = new RegExp ( "\^\<\(\[\\w\\d\^\>\]\+\)\.\*\>\(\.\*\)\<\/\\1\>\$", "m" );
+	var reg = /^<([\w\d^>]+).*>(.*)<\/\1>$/;
+	// console.log ( reg + ":" + selector + ":" + reg.test(selector) );
 	if ( c === '#' )
 	{
 		myObject.data.push ( document.getElementById ( selector.substring(1,selector.length ) ) );
 
-	}else
+	}else if ( reg.test ( selector ) ) {
+		var arr = reg.exec ( selector );
+		// console.log ( arr[1] );
+		var element = document.createElement ( arr[1] );
+		// console.log ( element );
+		element.innerHTML = arr[2];
+		myObject.data.push ( element );
+	}
+	else
 	{
 		// console.log ( document.getElementsByTagName ( selector ) );
 		myObject.data = document.getElementsByTagName ( selector );
 	}
-	
-	return myObject;	
+
+	return myObject;
 }

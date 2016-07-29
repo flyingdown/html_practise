@@ -1,11 +1,14 @@
-
+/* 封装的数据对象模板 */
 function MyObject ()
 {
 	this.data = [];
 }
 
+/* 封装的数据对象的原型方法 */
 MyObject.prototype = {
+	/* 模仿JQuery的text方法 */
 	text : function (content) {
+		/* 正则匹配形如:<div>abc</div> */
 		var reg = /(?:<[^>]+?>)?(.*)(?:<\/[^>]+?>)?/;
 		if ( content )
 		{
@@ -18,6 +21,7 @@ MyObject.prototype = {
 		}
 
 	},
+	/* 模仿JQuery的value方法 */
 	val : function ( content ) {
 		if ( content )
 		{
@@ -32,6 +36,7 @@ MyObject.prototype = {
 			return this.data[0].value;
 		}
 	},
+	/* 模仿JQuery的attr方法 */
 	attr : function ( key, value ) {
 		if ( value ) {
 			var attr = document.createAttribute (key);
@@ -46,6 +51,7 @@ MyObject.prototype = {
 				return this.data[0].getAttributeNode(key).value;
 		}
 	},
+	/* 模仿JQuery的addClass方法 */
 	addClass : function ( className ) {
 		var oriClassName;
 		for ( var i = 0; i < this.data.length; ++i )
@@ -63,6 +69,7 @@ MyObject.prototype = {
 			return this;
 		}
 	},
+	/* 模仿JQuery的removeClass方法 */
 	removeClass : function ( className ) {
 		var oriClassName;
 		if ( className )
@@ -70,7 +77,7 @@ MyObject.prototype = {
 			for ( var i = 0; i < this.data.length; ++i )
 			{
 				oriClassName = this.data[i].getAttributeNode("class").value;
-				var reg = new RegExp ( "\\s\*\\b" + className + "\\b\\s\*" );
+				var reg = new RegExp ( "\\s\*\\b" + className + "\\b\\s\*" ); /* 注意匹配边界 */
 				oriClassName = oriClassName.replace (reg, "");
 				// console.log ( oriClassName );
 				if ( oriClassName )
@@ -92,18 +99,21 @@ MyObject.prototype = {
 		}
 		return this;
 	},
+	/* 模仿JQuery的append方法 */
 	append : function ( element ) {
 		for ( var i = 0; i < this.data.length; ++i )
 		{
 			this.data[i].appendChild(element.data[0]);
 		}
 	},
+	/* 模仿JQuery的appendTo方法 */
 	appendTo : function ( element ) {
 		for ( var i = 0; i < this.data.length; ++i )
 		{
 			element.data[0].appendChild ( this.data[i] );
 		}
 	},
+	/* 模仿JQuery的insertBefore方法 */
 	insertBefore : function ( element ) {
 		for ( var i = 0; i < this.data.length; ++i )
 		{
@@ -120,11 +130,12 @@ var $ = function ( selector ) {
 	// var reg = new RegExp ( "\^\<\(\[\\w\\d\^\>\]\+\)\.\*\>\(\.\*\)\<\/\\1\>\$", "m" );
 	var reg = /^<([\w\d^>]+).*>(.*)<\/\1>$/;
 	// console.log ( reg + ":" + selector + ":" + reg.test(selector) );
+	/* 封装id选择器 */
 	if ( c === '#' )
 	{
 		myObject.data.push ( document.getElementById ( selector.substring(1,selector.length ) ) );
 
-	}else if ( reg.test ( selector ) ) {
+	}else if ( reg.test ( selector ) ) { /* 封装创建标签功能 */
 		var arr = reg.exec ( selector );
 		// console.log ( arr[1] );
 		var element = document.createElement ( arr[1] );
@@ -132,7 +143,7 @@ var $ = function ( selector ) {
 		element.innerHTML = arr[2];
 		myObject.data.push ( element );
 	}
-	else
+	else /* 封装标签选择器 */
 	{
 		// console.log ( document.getElementsByTagName ( selector ) );
 		myObject.data = document.getElementsByTagName ( selector );

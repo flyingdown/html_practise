@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="myquery.js"></script>
+	<script>
+		window.onload = function () {
+			console.log ( $("#mydiv").text() );
+			$("div").removeClass ( "mydiv1" );
+			$("body").append($("<div>hello jquery</div>"));
+			$("<span>123</span>").appendTo ( $("#mydiv") );
+			$("<div>hello world</div>").insertBefore ( $("#mydiv") );
+		}
+	</script>
+</head>
+<body>
+<div id="mydiv" class="mydiv1 abc">12345</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOTYPE html>
+<html>
+	<head>
+		<style>
+			div {
+				width : 100px;
+				height : 100px;
+				background-color : #f00;
+				margin : 10px;
+			}
+			hr {
+				margin : 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<input type="range" min="0" max="100" value="100" />
+		<div>
+
+		</div>
+		<hr />
+		<input type="range" min="0" max="255" value="255" />
+		<input type="range" min="0" max="255" value="255" />
+		<input type="range" min="0" max="255" value="255" />
+		<div id="rgb" >
+
+		</div>
+
+		<script type="text/javascript">
+			function init ()
+			{
+				inp = document.querySelector ( "input");
+				inp.addEventListener ( "change", function () {
+					div = document.querySelector ( "div");
+					div.style.opacity = inp.value / 100;
+				}, false );
+
+				inpGroup = document.querySelectorAll ( "input");
+				rgb = document.querySelector ( "#rgb");
+				for ( var i = 1; i < 4; ++i )
+				{
+					inpGroup[i].addEventListener ( "change", function () {
+						var tempStr = "#" + parseInt(inpGroup[1].value).toString(16) + parseInt(inpGroup[2].value).toString(16) + parseInt(inpGroup[3].value).toString(16);
+
+						console.log ( typeof ( tempStr ) );
+						rgb.style.backgroundColor = tempStr;
+						console.log ( rgb.style );
+						console.log ( rgb.style.backgroundColor );
+					}, false);
+				}
+			}
+			window.addEventListener ( "load", init, false );
+		</script>
+	</body>
+</html>

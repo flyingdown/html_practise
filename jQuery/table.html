@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<script src="jquery-1.11.1.js"></script>
+	<script>
+		$(document).ready ( function () {
+			$("table tfoot button").click ( function () {
+				var $tr = $( "<tr></tr>" );
+				var $td1 = $("<td></td>");
+				$td1.html ( $("#name").val() );
+				var $td2 = $("<td></td>");
+				$td2.html ( $("#price").val() );
+				var $td3 = $("<td></td>");
+				$td3.html ( $("#num").val() );
+				var $td4 = $("<td></td>");
+				$td4.html ("<button>修改</button><button>删除</button>")
+				$tr.append ( $td1 );
+				$tr.append ( $td2 );
+				$tr.append ( $td3 );
+				$tr.append ( $td4 );
+				// console.log ( $tr.html() );
+				$("table tbody").append ( $tr );
+
+				$("#name").val('');
+				$("#price").val('');
+				$("#num").val('')
+
+				$("table tbody tr:even").css("background", "#3c3");
+
+				$("button:contains('修改')").bind ( "click", function () {
+					var val;
+					// console.log ( $(this) );
+					var $tds = $(this).parent().siblings();
+					if ( $(this).html() == "修改" )
+					{
+						$(this).html("确定");
+						for ( var i = 0; i < $tds.length; ++i )
+						{
+							$($tds[i]).html("<input type='text' />");
+						}
+					}else
+					{
+						// console.log ( "start");
+						$(this).html("修改");
+						// console.log ( "end");
+						for ( var i = 0; i < $tds.length; ++i )
+						{
+							val = $($tds[i]).children().val();
+							// console.log ( $($tds[i]).children() );
+							$($tds[i]).html(val);
+						}
+					}
+				});
+				$("button:contains('删除')").bind("click", function () {
+					$(this).parent().parent().remove();
+				});
+			});
+		} )
+	</script>
+	<style>
+	/*table tbody tr {
+		background-color: red;
+	}*/
+	</style>
+</head>
+<body>
+	<table>
+		<thead>
+			<tr>
+				<td>书名</td>
+				<td>价格</td>
+				<td>库存</td>
+				<td>操作</td>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td><input id="name" type="text" /></td>
+				<td><input id="price" type="text" /></td>
+				<td><input id="num" type="text" /></td>
+				<td><button id="add">增加</button></td>
+			</tr>
+		</tfoot>
+	</table>
+</body>
+</html>

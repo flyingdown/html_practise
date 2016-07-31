@@ -105,6 +105,7 @@ MyObject.prototype = {
 		{
 			this.data[i].appendChild(element.data[0]);
 		}
+		return this;
 	},
 	/* 模仿JQuery的appendTo方法 */
 	appendTo : function ( element ) {
@@ -119,6 +120,267 @@ MyObject.prototype = {
 		{
 			// console.log ( element.data[0] );
 			element.data[0].parentNode.insertBefore ( this.data[i], element.data[0] );
+		}
+		return this;
+	},
+	remove : function () {
+		// console.log (this.data.length);
+		while ( this.data.length ) /* 注意如果用for循环时，数组长度在移除元素后的变化 */
+		{
+			this.data[0].parentNode.removeChild ( this.data[0] );
+		}
+	},
+	slideUp : function ( time ) {
+		var height, oriHeight;
+		var element;
+		var step;
+
+		if ( time == null )
+			time = 300;
+
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i];
+			oriHeight = height = element.offsetHeight;
+			step = height / time * 30;
+			// console.log ( step )
+			var loop = setInterval ( function () {
+				// console.log ( element.offsetHeight - step );
+				// console.log ( "start :" + element.offsetHeight );
+				height -= step;
+				if ( height <=0 )
+					height = 0;
+				element.style.height = height + "px";
+				// console.log ( "end :" + element.offsetHeight )
+				if ( element.offsetHeight <= 0 ){
+					clearInterval ( loop );
+					element.style.height = oriHeight + "px";
+					element.style.display = "none";
+					var end = new Date().getTime();
+					console.log ( end-start );
+				}
+			}, 30 );
+		}
+	},
+	slideDown : function ( time ) {
+		var height, oriHeight;
+		var element;
+		var step;
+
+		if ( time == null )
+			time = 300;
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i]
+			oriHeight = parseInt ( element.style.height );
+			element.style.height = "0px";
+			height = 0;
+			step = oriHeight / time * 30;
+			// console.log ( time );
+			element.style.display = "block";
+			var loop = setInterval ( function () {
+				height += step;
+				if ( height >= oriHeight )
+					height = oriHeight;
+				element.style.height = height + "px";
+				if ( element.offsetHeight >= oriHeight )
+				{
+					clearInterval ( loop );
+					var end = new Date().getTime();
+					console.log ( end-start );
+				}
+			}, 30 )
+		}
+	},
+	hide : function ( time ) {
+		var height, oriHeight, width, oriWidth;
+		var element;
+		var stepW, stpeH;
+
+		if ( time == null )
+			time = 300;
+
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i];
+			oriHeight = height = element.offsetHeight;
+			oriWidth = width = element.offsetWidth;
+			stepH = height / time * 30;
+			stepW = width / time * 30;
+			// console.log ( step )
+			var loop = setInterval ( function () {
+				// console.log ( element.offsetHeight - step );
+				// console.log ( "start :" + element.offsetHeight );
+				height -= stepH;
+				if ( height <=0 )
+					height = 0;
+				width -= stepW;
+				if ( width <= 0 )
+					width = 0;
+				element.style.height = height + "px";
+				element.style.width = width + "px";
+				// console.log ( "end :" + element.offsetHeight )
+				if ( element.offsetHeight <= 0 || element.offsetWidth <= 0 ){
+					clearInterval ( loop );
+					element.style.display = "none";
+					element.style.height = oriHeight + "px";
+					element.style.width = oriWidth + "px";
+					var end = new Date().getTime();
+					console.log ( end-start );
+				}
+			}, 30 );
+		}
+	},
+	show : function ( time ) {
+		var height, oriHeight, width, oriWidth;
+		var element;
+		var stepH, stepW;
+
+		if ( time == null )
+			time = 300;
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i]
+			oriHeight = parseInt ( element.style.height );
+			oriWidth = parseInt ( element.style.width );
+			element.style.height = "0px";
+			element.style.width = "0px";
+			height = 0;
+			width = 0;
+			stepH = oriHeight / time * 30;
+			stepW = oriWidth / time * 30;
+			// console.log ( time );
+			element.style.display = "block";
+			var loop = setInterval ( function () {
+				height += stepH;
+				width += stepW;
+				if ( height >= oriHeight )
+					height = oriHeight;
+				if ( width >= oriWidth )
+					width = oriWidth;
+				element.style.height = height + "px";
+				element.style.width = width + "px";
+				if ( element.offsetHeight >= oriHeight || element.offsetWidth >= oriWidth )
+				{
+					clearInterval ( loop );
+					var end = new Date().getTime();
+					console.log ( end-start );
+				}
+			}, 30 )
+		}
+	},
+	fadeOut : function ( time ) {
+
+		var element, oriOpacity, opacity, step;
+
+		time = time || 1000;
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i];
+			oriOpacity = opacity = getComputedStyle ( element ).opacity;
+			step = oriOpacity / time * 30;
+			console.log ( step );
+			var loop = setInterval ( function () {
+				opacity -= step;
+				if ( opacity <= 0 )
+					opacity = 0;
+				element.style.opacity = opacity;
+				if ( opacity <= 0 )
+				{
+					clearInterval ( loop );
+					element.style.display = "none";
+					element.style.opacity = oriOpacity;
+					var end = new Date().getTime();
+					console.log ( end - start );
+				}
+			}, 30 );
+
+		}
+	},
+	fadeIn : function ( time ) {
+
+		var element, oriOpacity, opacity, step;
+
+		time = time || 1000;
+		var start = new Date().getTime();
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i];
+			oriOpacity = opacity = getComputedStyle ( element ).opacity;
+			step = oriOpacity / time * 30;
+			opacity = element.style.opacity = 0;
+			element.style.display = "block";
+			console.log ( step );
+			var loop = setInterval ( function () {
+				opacity += step;
+				if ( opacity >= oriOpacity )
+					opacity = oriOpacity;
+				element.style.opacity = opacity;
+				if ( opacity >= oriOpacity )
+				{
+					clearInterval ( loop );
+					element.style.opacity = oriOpacity;
+					var end = new Date().getTime();
+					console.log ( end - start );
+				}
+			}, 30 );
+
+		}
+	},
+	animate : function ( obj, time ) {
+
+		if ( obj == null )
+			return;
+		time = time || 1000;
+
+		var element, oriWidth, oriHeight, width, height;
+		var stepW, stepH;
+		width = parseInt ( obj.width );
+		height = parseInt ( obj.height );
+
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			element = this.data[i];
+			oriWidth = element.offsetWidth;
+			oriHeight = element.offsetHeight;
+
+			stepW = ( width - oriWidth ) / time * 30;
+			stepH = ( height - oriHeight ) / time * 30;
+			console.log ( stepW + ":" + stepH );
+			var start = new Date().getTime();
+			var loop = setInterval ( function () {
+				oriWidth += stepW;
+				if ( ( stepW > 0 && oriWidth >= width )
+				|| ( stepW < 0 && oriWidth <= width) )
+					oriWidth = width;
+				oriHeight += stepH;
+				if ( ( stepH > 0 && oriHeight >= height )
+				|| ( stepH < 0 && oriHeight <= height) )
+					oriHeight = height;
+
+				element.style.width = oriWidth + "px";
+				element.style.height = oriHeight + "px";
+
+				if ( oriWidth == width || oriHeight == height )
+				{
+					clearInterval ( loop );
+					var end = new Date().getTime ();
+					console.log ( end - start );
+				}
+			}, 30 )
+		}
+
+	},
+	bind : function ( evnetName, func ) {
+		for ( var i = 0; i < this.data.length; ++i )
+		{
+			var element = this.data[i];
+			element.addEvenetListener ( evnetName, func, flase );
 		}
 	}
 }

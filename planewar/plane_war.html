@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="charset" content="utf-8">
 	<title></title>
 	<script type="text/javascript">
 	function init() {
 		/* 定义宽和高 */
 		var WIDTH=480, HEIGHT=620;
+
+		var diviation = 10;
 
 		/* 定义状态 */
 		var START = 0;
@@ -14,13 +17,18 @@
 		var PAUSE = 3;
 		var GAMEOVER = 4;
 
+		var NORMAL = 0;
+		var HIT  = 1;
+		var RUIN = 2;
+
 		/* 分数 */
-		var socre = 0;
+		var score = 0;
 		/* 生命 */
 		var life = 3;
 
 		/* 初始状态 */
 		var state = START;
+		// var state = GAMEOVER;
 
 		/* 定义资源 */
 		/* 背景图片 */
@@ -71,23 +79,23 @@
 			enemy_medium[i] = new Image ();
 			if ( i == 0 )
 				enemy_medium[i].src = "img/enemy2.png"
-			else if ( i < 4 )
-				enemy_medium[i].src = "img/enemy2_down" + i + ".png";
-			else
+			else if ( i < 2 )
 				enemy_medium[i].src = "img/enemy2_hit.png";
+			else
+				enemy_medium[i].src = "img/enemy2_down" + (i-1) + ".png";
 		}
 
 		/* 敌机－－大飞机图片 */
 		var enemy_big = [];
-		for ( var i = 0; i < 8; ++i )
+		for ( var i = 0; i < 9; ++i )
 		{
 			enemy_big[i] = new Image ();
 			if ( i < 2 )
 				enemy_big[i].src = "img/enemy3_n"+ (i+1)+".png"
-			else if ( i < 7 )
-				enemy_big[i].src = "img/enemy3_down" + (i-1) + ".png";
-			else
+			else if ( i < 3 )
 				enemy_big[i].src = "img/enemy3_hit.png";
+			else
+				enemy_big[i].src = "img/enemy3_down" + (i-2) + ".png";
 		}
 
 
@@ -116,7 +124,9 @@
 			type : 1,
 			score : 100,
 			maxSpeed : 70,
-			minSpeed : 50
+			minSpeed : 50,
+			life : 1,
+			ruinBase : 1
 		}
 
 		var ENEMY_MEDIUM = {
@@ -127,7 +137,9 @@
 			type : 2,
 			score : 200,
 			maxSpeed : 70,
-			minSpeed : 50
+			minSpeed : 50,
+			life : 2,
+			ruinBase : 2
 		}
 
 		var ENEMY_BIG = {
@@ -138,7 +150,9 @@
 			type : 3,
 			score : 500,
 			maxSpeed : 100,
-			minSpeed : 100
+			minSpeed : 100,
+			life : 6,
+			ruinBase : 3
 
 		}
 
@@ -146,7 +160,8 @@
 			frame : bullet_img ,
 			width : 9,
 			height : 21,
-			speed : 100
+			speed : 100,
+			life : 1
 		}
 
 		var HERO = {
@@ -156,7 +171,8 @@
 			x : ( WIDTH - 99 ) / 2,
 			y : ( HEIGHT - 124 ) / 2 + 90,
 			speed : 50,
-			base : 2
+			base : 2,
+			life : 3
 		}
 
 
@@ -183,85 +199,16 @@
 		var loader = new loading ( LOADING );
 		var hero = new Hero ( HERO );
 
-		/* enemy_smallers = [];
-		var enemy_small_interval = 1000;
-		var last_gen_small = new Date().getTime();
-
-		enemy_mediumers = [];
-		var enemy_medium_interval = 5500;
-		var last_gen_medium = new Date().getTime();
-
-		var enemy_biggers = [];
-		var enemy_big_interval = 15500;
-		var last_gen_big = new Date().getTime();
-
-		function enemy_genration ()
-		{
-			if ( new Date().getTime() - last_gen_small > enemy_small_interval )
-			{
-				if ( state == RUNNING )
-				{
-					enemy_smallers.push ( new Enemy_small ( ENEMY_SMALL ) );
-					last_gen_small = new Date().getTime();
-				}
-			}
-
-			if ( new Date().getTime() - last_gen_medium > enemy_medium_interval )
-			{
-				if ( state == RUNNING )
-				{
-					enemy_mediumers.push ( new Enemy_medium ( ENEMY_MEDIUM ) );
-					last_gen_medium = new Date().getTime();
-				}
-			}
-
-			if ( new Date().getTime() - last_gen_big > enemy_big_interval )
-			{
-				if ( state == RUNNING )
-				{
-					enemy_biggers.push ( new Enemy_big ( ENEMY_BIG ) );
-					last_gen_big = new Date().getTime();
-				}
-			}
-
-			for ( var i = 0; i < enemy_smallers.length; ++i )
-			{
-				if ( enemy_smallers[i].y > HEIGHT )
-					enemy_smallers.splice ( i, 1 );
-
-				enemy_smallers[i].step();
-				enemy_smallers[i].move();
-				enemy_smallers[i].paint(ctx);
-			}
-
-			for ( var i = 0; i < enemy_mediumers.length; ++i )
-			{
-				if ( enemy_mediumers[i].y > HEIGHT )
-					enemy_mediumers.splice ( i, 1 );
-
-				enemy_mediumers[i].step();
-				enemy_mediumers[i].move();
-				enemy_mediumers[i].paint(ctx);
-			}
-
-			for ( var i = 0; i < enemy_biggers.length; ++i )
-			{
-				if ( enemy_biggers[i].y > HEIGHT )
-					enemy_biggers.splice ( i, 1 );
-
-				enemy_biggers[i].move();
-				enemy_biggers[i].paint(ctx);
-			}
-		} */
 		var enemy = [];
 		var enemy_interval = 1000;
 		var last_gen_time = new Date().getTime();
 		var random_num;
 
 		function enemy_genration () {
+
 			if ( new Date().getTime() - last_gen_time > enemy_interval )
 			{
-				if ( state == RUNNING )
+				if ( state == RUNNING || state == GAMEOVER )
 				{
 					random_num = Math.floor ( Math.random () * 10 );
 					if ( random_num < 7 )
@@ -272,7 +219,7 @@
 						enemy.push ( new Enemy ( ENEMY_MEDIUM ) );
 					}else
 					{
-						if ( enemy[0].type != 3 )
+						if ( enemy.length > 0 && enemy[0].type != 3 )
 						{
 							enemy.splice ( 0, 0, new Enemy ( ENEMY_BIG ) );
 						}
@@ -284,14 +231,37 @@
 
 			for ( var i = 0; i < enemy.length; ++i )
 			{
-				enemy[i].move ();
+				var flag = false;
+				for ( var j = 0; j < hero.bullets.length; ++j )
+				{
+					flag = enemy[i].checkHit ( hero.bullets[j] );
+					if ( flag )
+					{
+						hero.bullets[j].y = -21;
+						break;
+					}else
+						enemy[i].status = NORMAL;
+				}
+
+				if ( enemy[i].checkHit ( hero ) )
+					-- hero.life;
+
+				if ( hero.life <= 0 )
+					state = GAMEOVER; /* hero.ruin(); 在此函数中处理hero销毁图片切换，并更改游戏状态为GAMEOVER */
+
+				if ( ! flag && enemy[i].life > 0)
+					enemy[i].step ();
+
+				if ( enemy[i].life <= 0 )
+					enemy[i].ruin();
+
 				enemy[i].paint ( ctx );
 
-				if ( enemy[i].y > HEIGHT )
+				if ( enemy[i].y >= HEIGHT )
 					enemy.splice ( i, 1 );
 			}
 
-			console.log ( enemy.length );
+			// console.log ( "当前敌机数量:" + enemy.length );
 		}
 
 
@@ -313,7 +283,8 @@
 		}
 
 		canvas.onmouseout = function ( event ) {
-			state = PAUSE;
+			if ( state == RUNNING )
+				state = PAUSE;
 		}
 
 		canvas.onmouseenter = function () {
@@ -322,10 +293,16 @@
 		}
 
 		/* 分数 生命 */
-		function SocreAndLife (ctx) {
+		function scoreAndLife (ctx) {
 			ctx.font = "20px 微软雅黑";
-			ctx.fillText ( "SOCRE : " + socre, 10, 20 );
-			ctx.fillText ( "LIFE : " + life, 400, 20 );
+			ctx.fillText ( "score : " + score, 10, 20 );
+			console.log ( hero.life );
+			ctx.fillText ( "LIFE : " + hero.life, 400, 20 );
+		}
+
+		function GameOver ( ctx ) {
+			ctx.font = "30px 微软雅黑";
+			ctx.fillText ( "GAME OVER", 140, 320 );
 		}
 
 		function Enemy ( config ) {
@@ -342,25 +319,49 @@
 			this.frame_interval = 100;
 			this.maxSpeed = config.maxSpeed;
 			this.minSpeed = config.minSpeed;
-			this.speed = config.speed;
-			if ( this.type == 3 )
-				this.speed = Math.ceil ( Math.random() * ( this.maxSpeed - this.minSpeed ) ) + this.minSpeed;
+			this.baseRuinFrame = config.ruinBase;
+			this.life = config.life;
+			this.status = NORMAL;
+			this.score = config.score;
+
+			this.speed = Math.ceil ( Math.random() * ( this.maxSpeed - this.minSpeed ) ) + this.minSpeed;
 
 			this.step = function () {
+
+				if ( this.status != RUIN )
+					this.move();
+
 				if ( new Date().getTime() - this.last_frame_time < this.frame_interval )
 					return ;
-				if ( this.type != 3 )
-					this.frame = this.frames[0];
-				else
-					this.frame = this.frames[this.frame_index++ % 2];
+
+				if ( this.status == NORMAL )
+				{
+					if ( this.type != 3 )
+						this.frame = this.frames[0];
+					else
+						this.frame = this.frames[this.frame_index++ % 2];
+				}else if ( this.status == HIT )
+				{
+					if ( this.type != 3 )
+						this.frame = this.frames[1];
+					else
+						this.frame = this.frames[2];
+				}
+				else if ( this.status == RUIN )
+				{
+					// console.log ( this.baseRuinFrame );
+					this.frame = this.frames[this.baseRuinFrame++];
+					if ( this.baseRuinFrame == this.frames.length )
+						this.y = HEIGHT;
+				}
 
 				this.last_frame_time = new Date().getTime();
+
 			}
 
 			this.move = function () {
-				this.step();
 
-				if ( state != RUNNING )
+				if ( state != RUNNING && state != GAMEOVER )
 					return;
 
 				if ( new Date().getTime() - this.last_move_time < this.speed )
@@ -373,129 +374,40 @@
 
 			this.paint = function ( ctx ) {
 				// console.log (this.x + ":" + this.y);
-				// console.log ( "start :" + this.type );
+				// console.log ( "start :" + this.type + ":" + this.status );
 				ctx.drawImage ( this.frame, this.x, this.y );
 				// console.log ( "end :" + this.type );
 			}
 			// hero_bullet.x-hero.bullet.width/2, hero_bullet.y-hero_bullet.height/2
 			// this.x-hero.bullet.width/2 -- this.x+this.width+hero_bullet.width/2
 			// this.y-hero.bullet.height/2 -- this.y+this.height+hero_bullet.height/2
-			this.hit = function ( hero_bullet ) {
-				if ( hero_bullet.x - hero_bullet.width / 2 > this.x - hero_bullet.width / 2
-					&& hero_bullet.x - hero_bullet.width / 2 < this.x + this.width + hero_bullet.width / 2
-					&& hero_bullet.y-hero_bullet.height/2 > this.y - hero.bullet.height / 2
-					&& hero_bullet.y-hero_bullet.height/2 < this.y+this.height+hero_bullet.height/2 )
+			this.checkHit = function ( hero_bullet ) {
+				if ( hero_bullet.x - hero_bullet.width / 2 > this.x - hero_bullet.width / 2 + diviation
+					&& hero_bullet.x - hero_bullet.width / 2 < this.x + this.width + hero_bullet.width / 2 - diviation
+					&& hero_bullet.y - hero_bullet.height / 2 > this.y - hero_bullet.height / 2 + diviation
+					&& hero_bullet.y - hero_bullet.height / 2 < this.y + this.height + hero_bullet.height / 2 - diviation )
+				{
+					console.log ( "检测到撞击" );
+					this.hit();
 					return true;
-				else
+				}else
 					return false;
 			}
+
+			this.hit = function () {
+				this.status = HIT;
+				this.step ();
+				--this.life;
+				// console.log ( "当前生命值：" + this.life );
+			}
+
+
+			this.ruin = function () {
+				score += this.score;
+				this.status = RUIN;
+				this.step ();
+			}
 		}
-
-		/* 敌机－－大飞机业务对象
-		function Enemy_big ( config ) {
-			this.frames = config.frames;
-			this.width = config.width;
-			this.height = config.height;
-			this.speed = config.speed;
-			this.last_move_time = new Date().getTime();
-			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
-			this.y = 0;
-			this.frame_index = 0;
-			this.last_frame_time = new Date().getTime();
-			this.frame_interval = 100;
-
-			this.step = function () {
-				if ( new Date().getTime() - this.last_frame_time < this.frame_interval )
-					return ;
-
-				this.frame = this.frames[this.frame_index++ % 2];
-
-				this.last_frame_time = new Date().getTime();
-			}
-
-			this.move = function () {
-				this.step();
-
-				if ( state != RUNNING )
-					return;
-
-				if ( new Date().getTime() - this.last_move_time < this.speed )
-					return;
-
-				this.y += 2;
-
-				this.last_move_time = new Date().getTime();
-			}
-
-			this.paint = function ( ctx ) {
-				// console.log (this.x + ":" + this.y);
-				ctx.drawImage ( this.frame, this.x, this.y );
-			}
-		} */
-
-		/* 敌机－－中等飞机业务对象
-		function Enemy_medium ( config ) {
-			this.frames = config.frames;
-			this.width = config.width;
-			this.height = config.height;
-			this.speed = config.speed;
-			this.last_move_time = new Date().getTime();
-			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
-			this.y = 0;
-
-			this.step = function () {
-				this.frame = this.frames[0];
-			}
-
-			this.move = function () {
-				if ( state != RUNNING )
-					return;
-
-				if ( new Date().getTime() - this.last_move_time < this.speed )
-					return;
-
-				this.y += 2;
-
-				this.last_move_time = new Date().getTime();
-			}
-
-			this.paint = function ( ctx ) {
-				// console.log (this.x + ":" + this.y);
-				ctx.drawImage ( this.frame, this.x, this.y );
-			}
-		} */
-
-		/* 敌机－－小飞机业务对象
-		function Enemy_small ( config ) {
-			this.frames = config.frames;
-			this.width = config.width;
-			this.height = config.height;
-			this.speed = config.speed;
-			this.last_move_time = new Date().getTime();
-			this.x = Math.ceil ( Math.random () * ( WIDTH - this.width ) );
-			this.y = 0;
-
-			this.step = function () {
-				this.frame = this.frames[0];
-			}
-
-			this.move = function () {
-				if ( state != RUNNING )
-					return;
-
-				if ( new Date().getTime() - this.last_move_time < this.speed )
-					return;
-
-				this.y += 2;
-
-				this.last_move_time = new Date().getTime();
-			}
-
-			this.paint = function ( ctx ) {
-				// console.log (this.x + ":" + this.y);
-				ctx.drawImage ( this.frame, this.x, this.y );
-			}
-		} */
 
 		/* 子弹模板 */
 		function Bullet ( config, x, y ) {
@@ -524,9 +436,12 @@
 			this.frame_index = 0;
 			this.x = ( WIDTH - 99 ) / 2;
 			this.y = ( HEIGHT - 124 ) / 2 + 90;
-			this.shootInterval = 200;
+			this.shootInterval = 400;
 			this.shoot_last_time = new Date().getTime();
 			this.bullets = [];
+			this.life = config.life;
+			this.width = config.width;
+			this.height = config.height;
 
 			this.step = function () {
 				if ( new Date().getTime() - this.last_move_time < this.speed )
@@ -650,7 +565,7 @@
 					sky.paint(ctx);
 
 					// 分数
-					SocreAndLife ( ctx );
+					scoreAndLife ( ctx );
 
 					hero.step();
 					hero.paint(ctx);
@@ -664,7 +579,7 @@
 					sky.step();
 					sky.paint(ctx);
 					// 分数
-					SocreAndLife ( ctx );
+					scoreAndLife ( ctx );
 					hero.step();
 					hero.paint(ctx);
 					hero.shoot();
@@ -675,6 +590,10 @@
 					// 游戏背景
 					sky.step();
 					sky.paint(ctx);
+					// 分数
+					scoreAndLife ( ctx );
+					enemy_genration ();
+					GameOver ( ctx );
 					break;
 
 			}

@@ -92,7 +92,7 @@
 			enemy_big[i] = new Image ();
 			if ( i < 2 )
 				enemy_big[i].src = "img/enemy3_n"+ (i+1)+".png"
-			else if ( i < 3 )
+			else if ( i == 2 )
 				enemy_big[i].src = "img/enemy3_hit.png";
 			else
 				enemy_big[i].src = "img/enemy3_down" + (i-2) + ".png";
@@ -234,6 +234,9 @@
 				var flag = false;
 				for ( var j = 0; j < hero.bullets.length; ++j )
 				{
+					if (enemy[i].status == RUIN || state == GAMEOVER )
+						continue;
+
 					flag = enemy[i].checkHit ( hero.bullets[j] );
 					if ( flag )
 					{
@@ -243,7 +246,7 @@
 						enemy[i].status = NORMAL;
 				}
 
-				if ( enemy[i].checkHit ( hero ) )
+				if ( enemy[i].checkHit ( hero ) && hero.life > 0 )
 					-- hero.life;
 
 				if ( hero.life <= 0 )
@@ -351,8 +354,11 @@
 				{
 					// console.log ( this.baseRuinFrame );
 					this.frame = this.frames[this.baseRuinFrame++];
-					if ( this.baseRuinFrame == this.frames.length )
+					if ( this.baseRuinFrame >= this.frames.length )
+					{
+						score += this.score;
 						this.y = HEIGHT;
+					}
 				}
 
 				this.last_frame_time = new Date().getTime();
@@ -378,14 +384,14 @@
 				ctx.drawImage ( this.frame, this.x, this.y );
 				// console.log ( "end :" + this.type );
 			}
-			// hero_bullet.x-hero.bullet.width/2, hero_bullet.y-hero_bullet.height/2
+			// hero_bullet.x+hero.bullet.width/2, hero_bullet.y+hero_bullet.height/2
 			// this.x-hero.bullet.width/2 -- this.x+this.width+hero_bullet.width/2
 			// this.y-hero.bullet.height/2 -- this.y+this.height+hero_bullet.height/2
 			this.checkHit = function ( hero_bullet ) {
-				if ( hero_bullet.x - hero_bullet.width / 2 > this.x - hero_bullet.width / 2 + diviation
-					&& hero_bullet.x - hero_bullet.width / 2 < this.x + this.width + hero_bullet.width / 2 - diviation
-					&& hero_bullet.y - hero_bullet.height / 2 > this.y - hero_bullet.height / 2 + diviation
-					&& hero_bullet.y - hero_bullet.height / 2 < this.y + this.height + hero_bullet.height / 2 - diviation )
+				if ( hero_bullet.x + hero_bullet.width / 2 > this.x - hero_bullet.width / 2
+					&& hero_bullet.x + hero_bullet.width / 2 < this.x + this.width + hero_bullet.width / 2
+					&& hero_bullet.y + hero_bullet.height / 2 > this.y - hero_bullet.height / 2
+					&& hero_bullet.y + hero_bullet.height / 2 < this.y + this.height + hero_bullet.height / 2 )
 				{
 					console.log ( "检测到撞击" );
 					this.hit();
@@ -403,7 +409,6 @@
 
 
 			this.ruin = function () {
-				score += this.score;
 				this.status = RUIN;
 				this.step ();
 			}

@@ -5,19 +5,72 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="styles/site.css">
-	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery-1.11.1.js"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<title>我的简历</title>
 </head>
 <body class="container">
 	<header class="page-header">
-		<h1>我的简历</h1>
+		<h1>
+			我的简历
+			<small>My resume</small>
+		</h1>
 	</header>
-	<div>
-		<div class="row">
-
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="row">
+				<blockquote>
+					<p class="text-info">个人信息</p>
+					<small>Personal info</small>
+				</blockquote>
+				<img alt="证件照" class="img-responsive img-rounded" src="images/me.jpg">
+				<section class="text-center">
+					<span class="lead text-primary">王安全</span>
+				</section>
+			</div>
+			<div class="row">
+				<blockquote>
+					<p class="text-info">联系方式</p>
+					<small>Contact me</small>
+				</blockquote>
+				<section>
+					<address>
+						<p>
+							<span class="glyphicon glyphicon-home"></span>
+							<span class="text-muted">住址：</span>
+							河南省焦作市
+						</p>
+						<p>
+							<span class="glyphicon glyphicon-envelope"></span>
+							<span class="text-muted">email：</span>
+							<a href="maito:wanganquan_87@163.com">wanganquan_87@163.com</a>
+						</p>
+						<p>
+							<span class="glyphicon glyphicon-barcode"></span>
+							<span class="text-muted">邮编：</span>
+							<kbd>4</kbd>
+							<kbd>5</kbd>
+							<kbd>4</kbd>
+							<kbd>0</kbd>
+							<kbd>0</kbd>
+							<kbd>0</kbd>
+						</p>
+						<p>
+							<span class="glyphicon glyphicon-phone"></span>
+							<span class="text-muted">手机：</span>
+							<mark>18339763137</mark>
+						</p>
+					</address>
+				</section>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div class="jumbotron">
+				<h3>6年Linux/Unix开发经验，多个金融项目主导核心开发实施。</h3>
+			</div>
 		</div>
 	</div>
+
 	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
 </body>
 </html>

@@ -1,3 +1,8 @@
 div {
-	border : 0 dotted black;
+	border : 0px dotted black;
 }
+
+/*body {
+	padding-bottom: 70px;
+}
+*/

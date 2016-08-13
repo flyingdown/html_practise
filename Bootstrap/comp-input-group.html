@@ -14,10 +14,21 @@
 		<h1 class="text-capitalize">component</h1>
 	</header>
 	<div>
-		<button class="btn btn-link" title="编辑">
-			<span class="glyphicon glyphicon-edit"></span>
-		</button>
+		<div class="input-group">
+			<span class="input-group-addon">Email</span>
+			<input type="email" class="form-control" >
+			<span class="input-group-btn">
+				<button id="mailTo" type="button" class="btn btn-success" >Go</button>
+			</span>
+		</div>
 	</div>
 	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
+	<script>
+		$(function(){
+			$("#mailTo").click(function(){
+				location.href = "mailto:" + $(this).parent().prev().val();
+			})
+		})
+	</script>
 </body>
 </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+	<meta charset="utf-8" >
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="styles/site.css">
+	<script src="js/jquery-1.11.1.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<title>component</title>
+</head>
+<body class="container">
+	<header class="page-header">
+		<h1 class="text-capitalize">component</h1>
+	</header>
+	<div>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">MiniBlog</a>
+					<button data-toggle="collapse" data-target="#divNav" type="button" class="navbar-toggle">
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				    </button>
+				</div>
+				<div class="collapse navbar-collapse" id="divNav">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="#">
+								<span class="glyphicon glyphicon-home" ></span>
+								Home
+							</a>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<span class="glyphicon glyphicon-music" ></span>
+								Music
+								<b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu" >
+								<li><a href="#">Americal</a></li>
+								<li><a href="#">Chinese</a></li>
+							</ul>
+						</li>
+						<li>
+							<form class="navbar-form navbar-left" role="search">
+							  <div class="form-group">
+							    <input type="text" class="form-control" placeholder="Search">
+							  </div>
+							  <button type="submit" class="btn btn-default">
+							  	<span class="glyphicon glyphicon-search" ></span>
+							  </button>
+							</form>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right" style="padding-right:5px" >
+						<li>
+							<a href="#">
+								<span class="glyphicon glyphicon-envelope" ></span>
+								Email
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<span class="glyphicon glyphicon-music" ></span>
+								About
+							</a>
+						</li>
+						<li>
+							<button type="button" class="btn btn-default navbar-btn">Sign in</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</div>
+	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
+</body>
+</html>

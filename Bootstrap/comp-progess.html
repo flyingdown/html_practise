@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+	<meta charset="utf-8" >
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="styles/site.css">
+	<script src="js/jquery-1.11.1.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<title>component</title>
+</head>
+<body class="container">
+	<header class="page-header">
+		<h1 class="text-capitalize">component</h1>
+	</header>
+	<div>
+		<div class="progress">
+			<div id="prog" class="active progress-bar-info progress-bar progress-bar-striped" style="width:0%">0%</div>
+		</div>
+		<button id="start" class="btn btn-default" >Start</button>
+	</div>
+	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
+	<script>
+		$(function(){
+			$("#start").click(function(){
+				var progress = 0;
+				var loop = setInterval(function(){
+					progress++
+					$("#prog").css ( "width", progress + "%" );
+					$("#prog").html(progress+"%");
+					if ( progress == 60 )
+					{
+						$("#prog").removeClass("progress-bar-info").addClass("progress-bar-success");
+					}
+					else if ( progress == 80 )
+					{
+						$("#prog").removeClass("progress-bar-success").addClass("progress-bar-warning");
+					}else if ( progress == 90 )
+					{
+						$("#prog").removeClass("progress-bar-warning").addClass("progress-bar-danger");
+					}
+					if ( progress >= 100 )
+						clearInterval ( loop );
+				}, 50)
+			})
+		})
+	</script>
+</body>
+</html>

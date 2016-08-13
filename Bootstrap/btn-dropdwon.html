@@ -14,9 +14,21 @@
 		<h1 class="text-capitalize">component</h1>
 	</header>
 	<div>
-		<button class="btn btn-link" title="编辑">
-			<span class="glyphicon glyphicon-edit"></span>
-		</button>
+		<div class="btn-group">
+			<button class="btn btn-search">
+			<span class="glyphicon glyphicon-search"></span>
+			Search
+			</button>
+			<button data-toggle="dropdown" class="btn btn-search">
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a herf="#">Action1</a></li>
+				<li><a herf="#">Action2</a></li>
+				<li><a herf="#">Action3</a></li>
+				<li><a herf="#">Action4</a></li>
+			</ul>
+		</div>
 	</div>
 	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
 </body>

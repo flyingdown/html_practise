@@ -14,10 +14,21 @@
 		<h1 class="text-capitalize">component</h1>
 	</header>
 	<div>
-		<button class="btn btn-link" title="编辑">
-			<span class="glyphicon glyphicon-edit"></span>
-		</button>
+		<div class="alert alert-danger">
+			<button id="close" class="close" type="button">&times;</button>
+			<p>
+				sdfadf ad累计亏损幅度来看就；垃圾的楼房
+				<a href="#" class="alert-link">LINK</a>
+			</p>
+		</div>
 	</div>
 	<footer class="navbar-fixed-bottom text-center">&copy; 2016</footer>
+	<script>
+		$(function(){
+			$("#close").click(function(){
+				$(this).parent().fadeOut(1000);
+			})
+		})
+	</script>
 </body>
 </html>

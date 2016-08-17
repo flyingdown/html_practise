@@ -1,3 +1,28 @@
+@baseColor: #000;
+@lightColor: lighten(@baseColor, 50%);
+@darkColor: darken(@baseColor, 50%);
+
 body {
-	backgroud-color: #00f;
+	background-color: #fff;
+}
+
+.bordered(@b:1px) {
+	border: @b dotted black;
+}
+
+.rounded(@radius:5px) {
+	        border-radius: @radius;
+	-webkit-border-radius: @radius;
+	     -o-border-radius: @radius;
+	   -moz-border-radius: @radius;
+}
+
+.shadow(@x:5px, @y:5px, @c:@darkColor) {
+	box-shadow: @arguments;
+}
+
+header, footer, aside, article, section, div, nav {
+	.bordered;
+	.rounded;
+	.shadow;
 }

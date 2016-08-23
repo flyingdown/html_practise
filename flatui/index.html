@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<title>flatui</title>
+	<link rel="stylesheet" href="flatui/css/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="flatui/css/flat-ui.min.css">
+	<script src="flatui/js/vendor/jquery.min.js"></script>
+	<!-- script src="flatui/js/bootstrap.min.js"></script -->
+	<script src="flatui/js/flat-ui.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<button class="btn btn-primary btn-lg">按钮</button>
+		<div class="switch switch-large">
+	    	<input type="checkbox" checked >
+		</div>
+		<input type="checkbox" checked data-toggle="switch" id="custom-switch-01" />
+	</div>
+	<script>
+	$('#custom-switch-01').bootstrapSwitch();
+	</script>
+</body>
+</html>

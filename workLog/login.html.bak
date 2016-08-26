@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" >
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+	<title>焦作中旅银行工作日志</title>
+</head>
+<body class="container" >
+	<header class="page-header" >
+		<h1>
+			登陆
+		</h1>
+	</header>
+	<div>
+		<div class="row" >
+			<div class="col-sm-6 col-sm-offset-3" >
+				<form method="post" action="" class="form-horizontal" >
+					{% csrf_token %}
+					<!-- 员工号 -->
+					<div class="form-group has-feedback">
+				    	<div class="col-sm-10 input-group">
+						  	<span class="input-group-addon">
+						  		<span class="glyphicon glyphicon-user"></span>
+						  	</span>
+			      			<input name="emp_no" type="text" class="form-control" id="inputLogName" placeholder="请输入6位员工号">
+			      			<span></span>
+			    		</div>
+			  		</div>
+					<!-- 密码 -->
+					<div class="form-group">
+				    	<div class="col-sm-10  input-group">
+				    		<span class="input-group-addon">
+						  		<span class="glyphicon glyphicon-asterisk"></span>
+						  	</span>
+			      			<input name="emp_passwd" type="password" class="form-control" id="inputPasswd" placeholder="请输入密码">
+			      			<span></span>
+			    		</div>
+			  		</div>
+			  		<div class="row" >
+			  			<div class="col-sm-7 col-sm-offset-3" >
+					  		<p class="text-right" >
+					  			<button type="submit" class="btn btn-primary">登陆</button>
+					  			<button type="reset" class="btn btn-danger">重置</button>
+					  		</p>
+			  			</div>
+			  		</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<footer class="navbar navbar-fixed-bottom text-center" >
+		<span>&copy; 2016</span>
+	</footer>
+	<script src="static/js/jquery-1.11.1.js"></script>
+	<script src="static/bootstrap/js/bootstrap.min.js"></script>
+	<script>
+
+		function checkInput ( element, regexp ) {
+			console.log ( regexp );
+			if ( regexp.test ( element.val() ) == false )
+			{
+				element.parent().parent().removeClass().addClass("form-group has-feedback has-error");
+				element.next().addClass ( "glyphicon glyphicon-remove form-control-feedback" );
+				return false;
+			}else
+			{
+				element.parent().parent().removeClass().addClass("form-group");
+				element.next().removeClass();
+				return true;
+			}
+		}
+
+		$(function () {
+			$('#inputLogName').blur ( function () {
+				checkInput ( $(this), new RegExp ( "^\\d{6}$" ) );
+			});
+			$('#inputPasswd').blur (  function () {
+				checkInput ( $(this), new RegExp ( "^\\S+$" ) );
+			});
+
+			$("form").submit ( function () {
+				return ( checkInput ( $('#inputLogName'), new RegExp ( "^\\d{6}$" ) ) && checkInput ($('#inputPasswd'), new RegExp ( "^\\S+$" ) ) );
+			});
+		})
+
+		/*$(function () {
+			$('#inputLogName').blur ( function () {
+				if ( /^\d{6}$/.test ( $(this).val() ) == false )
+				{
+					$(this).parent().parent().removeClass().addClass("form-group has-feedback has-error");
+					$(this).next().addClass ( "glyphicon glyphicon-remove form-control-feedback" );
+				}else
+				{
+					$(this).parent().parent().removeClass().addClass("form-group");
+					$(this).next().removeClass();
+				}
+			});
+
+			$('#inputPasswd').blur ( function () {
+				if ( /^\S+$/.test ( $(this).val() ) == false )
+				{
+					$(this).parent().parent().removeClass().addClass("form-group has-feedback has-error");
+					$(this).next().addClass ( "glyphicon glyphicon-remove form-control-feedback" );
+				}else
+				{
+					$(this).parent().parent().removeClass().addClass("form-group");
+					$(this).next().removeClass();
+				}
+			});
+		})*/
+	</script>
+</body>
+</html>

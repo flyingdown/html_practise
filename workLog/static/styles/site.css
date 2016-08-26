@@ -1,0 +1,13 @@
+div {
+	border : 0px dotted black;
+}
+
+/*body {
+	padding-bottom: 70px;
+}
+*/
+
+
+body {
+	background-image: url("static/images/bg.jpg")
+}
